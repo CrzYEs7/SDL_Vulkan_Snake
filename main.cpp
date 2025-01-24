@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
+#include "snake.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -9,18 +10,23 @@ int main(int argc, char* args[])
 {
 	SDL_Window* window = NULL;
 	SDL_Surface* screenSurface = NULL;
-	Uint32 frame_time = SDL_GetTicks();
-	Uint32 last_time = SDL_GetTicks();
+
+	float frame_time = SDL_GetTicks();
+	float last_time = SDL_GetTicks();
+	float fps = 0;
+
+	float current_step_time = 0;
+	float step_time = 100;
+	
 	SDL_Event e;
 	bool quit = false;
-
-	float fps = 0;
 
 	if( SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		return 0;
 	}
 
+	float sdl_start_time = SDL_GetTicks();
 	
 	window = SDL_CreateWindow("Snake Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	
@@ -31,8 +37,12 @@ int main(int argc, char* args[])
 	
 	screenSurface = SDL_GetWindowSurface( window );
 	
-	SDL_Rect rect = {10,10,20,20};
+	
+	Snake snake{1, 10, 10};
+	snake._speed = 20;
 
+	SDL_Rect rect = {snake._x, snake._y, 20, 20};
+	
 	SDL_FillRect( screenSurface, &rect, 0xffffffff);
 
 	SDL_UpdateWindowSurface( window );
@@ -41,27 +51,58 @@ int main(int argc, char* args[])
 	while( !quit )
 	{
 		last_time = SDL_GetTicks();
-	
+		
+		current_step_time += frame_time;
+
 		// Move rect
-		rect.x += 1 * frame_time;
+
+		if (current_step_time >= step_time)
+		{
+			snake.move(snake.direction_x,snake.direction_y , frame_time);
+			rect.x = snake._x;
+			rect.y = snake._y;
+			current_step_time = 0;
+		}
 
 		SDL_FillRect( screenSurface, NULL, 0x00000000);
 		SDL_FillRect( screenSurface, &rect, 0xffffffff);
 
 		SDL_UpdateWindowSurface( window );
 
-		if (rect.x > 800)
-		{
-			rect.x = 0;
-		}
-		
+		if (snake._x > SCREEN_WIDTH ) snake._x = 0;
+		if (snake._y > SCREEN_HEIGHT) snake._y = 0;
+		if (snake._x < 0) snake._x = SCREEN_WIDTH;
+		if (snake._y < 0) snake._y = SCREEN_HEIGHT;
+
 		while( SDL_PollEvent( &e ) )
 		{ 
 			if( e.type == SDL_QUIT ) quit = true; 
+
+			if( e.key.keysym.sym == SDLK_UP )
+			{
+				snake.direction_y = -1;
+				snake.direction_x = 0;
+			}
+			if( e.key.keysym.sym == SDLK_DOWN )
+			{
+				snake.direction_y = 1;
+				snake.direction_x = 0;
+			}
+			if( e.key.keysym.sym == SDLK_LEFT )
+			{
+				snake.direction_x = -1;
+				snake.direction_y = 0;
+			}
+			if( e.key.keysym.sym == SDLK_RIGHT )
+			{
+				snake.direction_x = 1;
+				snake.direction_y = 0;
+			}
 		} 
 		
 		frame_time = SDL_GetTicks() - last_time;
 		fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+		//printf("fps: %f\n", fps);
 	}
 	
 	//Destroy window

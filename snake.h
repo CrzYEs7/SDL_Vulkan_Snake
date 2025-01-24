@@ -1,19 +1,26 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
-class Snake(Uint32 size, int x, int y)
+class Snake
 {
 public:
+	Snake(int size, int x, int y);
+	int _y = 0;
+	int _x = 0;
+	int direction_x = 0;
+	int direction_y = 0;
+	int _speed = 1;
+
+public:
 	void move_to(int x, int y);
+	void move(int x, int y, float delta);
 	int get_speed();
-	int set_speed(float new_speed);
-	Uint32 get_size();
-	Uint32 set_sizes(Uint32 new_size);
+	void set_speed(int new_speed);
+	int get_size();
+	void set_sizes(int new_size);
+
 private:
-	float _speed = 1;
-	Uint32 _size = size;
-	int x = 0;
-	int y = 0;
-}
+	int _size = 1;
+};
 
 #endif

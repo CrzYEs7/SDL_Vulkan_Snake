@@ -1,38 +1,41 @@
 #include "snake.h"
 
-void Snake::Snake(Uint32 size, int x = 0, int y = 0)
+Snake::Snake(int size = 1, int x = 0, int y = 0)
 {
 	_size = size;
-	_x = _x;
-	_y = _y;
+	_x = x;
+	_y = y;
 	_speed = 1;
 }
 
-void move_to(int x, int y)
+void Snake::move_to(int x, int y)
 {
 	_x = x;
 	_y = y;
 }
 
-int get_speed(){
+void Snake::move(int x, int y, float delta)
+{
+	_x += x * _speed * delta;
+	_y += y * _speed * delta;
+}
+
+int Snake::get_speed()
 {
 	return _speed;
 }
 
-int set_speed(float new_speed){
+void Snake::set_speed(int new_speed)
 {
 	_speed = new_speed;
 }
 
-Uint32 get_size()
+int Snake::get_size()
 {
 	return _size;
 }
 
-Uint32 set_sizes(Uint32 new_size)
+void Snake::set_sizes(int new_size)
 {
 	_size = new_size;
 }
-
-float _speed = 1;
-Uint32 _size = size;
