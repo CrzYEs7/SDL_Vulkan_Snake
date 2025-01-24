@@ -1,13 +1,14 @@
 #include <stdio.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "snake.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#define CELL_SIZE 20
 
 int main(int argc, char* args[])
-{
+{ 
 	SDL_Window* window = NULL;
 	SDL_Surface* screenSurface = NULL;
 
@@ -41,39 +42,13 @@ int main(int argc, char* args[])
 	Snake snake{1, 10, 10};
 	snake._speed = 20;
 
-	SDL_Rect rect = {snake._x, snake._y, 20, 20};
+	SDL_Rect rect = {snake._x, snake._y, CELL_SIZE, CELL_SIZE};
 	
-	SDL_FillRect( screenSurface, &rect, 0xffffffff);
-
+	SDL_FillRect( screenSurface, &rect, 0xffffffff); 
 	SDL_UpdateWindowSurface( window );
-
 
 	while( !quit )
 	{
-		last_time = SDL_GetTicks();
-		
-		current_step_time += frame_time;
-
-		// Move rect
-
-		if (current_step_time >= step_time)
-		{
-			snake.move(snake.direction_x,snake.direction_y , frame_time);
-			rect.x = snake._x;
-			rect.y = snake._y;
-			current_step_time = 0;
-		}
-
-		SDL_FillRect( screenSurface, NULL, 0x00000000);
-		SDL_FillRect( screenSurface, &rect, 0xffffffff);
-
-		SDL_UpdateWindowSurface( window );
-
-		if (snake._x > SCREEN_WIDTH ) snake._x = 0;
-		if (snake._y > SCREEN_HEIGHT) snake._y = 0;
-		if (snake._x < 0) snake._x = SCREEN_WIDTH;
-		if (snake._y < 0) snake._y = SCREEN_HEIGHT;
-
 		while( SDL_PollEvent( &e ) )
 		{ 
 			if( e.type == SDL_QUIT ) quit = true; 
@@ -98,11 +73,35 @@ int main(int argc, char* args[])
 				snake.direction_x = 1;
 				snake.direction_y = 0;
 			}
-		} 
+		}
+
+		last_time = SDL_GetTicks();
+		
+		current_step_time += frame_time;
+
+		if (current_step_time >= step_time)
+		{
+			snake.move(snake.direction_x,snake.direction_y , frame_time);
+			rect.x = snake._x;
+			rect.y = snake._y;
+			current_step_time = 0;
+		}
+
+		SDL_FillRect( screenSurface, NULL, 0x00000000);
+		SDL_FillRect( screenSurface, &rect, 0xffffffff);
+
+		SDL_UpdateWindowSurface( window );
+
+		if (snake._x > SCREEN_WIDTH ) snake._x = 0;
+		if (snake._y > SCREEN_HEIGHT) snake._y = 0;
+		if (snake._x < 0) snake._x = SCREEN_WIDTH;
+		if (snake._y < 0) snake._y = SCREEN_HEIGHT;
+
+			 
 		
 		frame_time = SDL_GetTicks() - last_time;
 		fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
-		//printf("fps: %f\n", fps);
+		printf("fps: %f\n", fps);
 	}
 	
 	//Destroy window
