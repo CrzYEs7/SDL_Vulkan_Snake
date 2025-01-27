@@ -55,22 +55,22 @@ void Snake::grow(int n)
 	_size += n;
 }
 
-void Snake::draw(int cell_size, SDL_Rect rect, SDL_Surface *surface)
+void Snake::draw(int cell_size, SDL_Rect *rect, SDL_Surface *surface)
 {
-	rect.x = _x;
-	rect.y = _y;
+	rect->x = _x;
+	rect->y = _y;
 
-	SDL_FillRect(surface, &rect, color);
+	SDL_FillRect(surface, rect, color);
 
 	if (_body.empty())
 		return;
 
 	for (Cell cell : _body)
 	{
-		rect.x = cell.x;
-		rect.y = cell.y;
+		rect->x = cell.x;
+		rect->y = cell.y;
 
-		SDL_FillRect(surface, &rect, cell.color);
+		SDL_FillRect(surface, rect, cell.color);
 	}
 }
 

@@ -12,14 +12,13 @@ public:
 	~Game() = default;
 public:
 	void Update(float delta);
-	void Draw();
+	void Draw(SDL_Surface *surface);
 	void Input(SDL_Event e);
 
 public:
 	int screen_width;
 	int screen_height;
 	int cell_size;
-	SDL_Surface *surface;
 	
 	SDL_Rect rect;
 	Snake _snake;

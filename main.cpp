@@ -18,7 +18,6 @@ int main(int argc, char* args[])
 	game.screen_width = SCREEN_WIDTH;
 	game.screen_height = SCREEN_HEIGHT;
 	game.cell_size = CELL_SIZE;
-	game.surface = screenSurface;
 
 	float frame_time = SDL_GetTicks();
 	float last_time = SDL_GetTicks();
@@ -45,7 +44,6 @@ int main(int argc, char* args[])
 
 	while( !quit )
 	{
-		last_time = SDL_GetTicks();
 
 		SDL_Event e;
 		while( SDL_PollEvent( &e ) )
@@ -54,23 +52,26 @@ int main(int argc, char* args[])
 		//* ------------ Input ------------- *//
 			game.Input(e);	
 		}
+		
+		last_time = SDL_GetTicks();
 		//* ------------ Update --------- *//	
 		game.Update(frame_time);	
 		
 		// Clear Screen
 		SDL_FillRect( screenSurface, NULL, 0x00000000);
-	
-		//* ------------ Draw ----------- *//	
-		game.Draw();
-		
-		game._snake.draw(CELL_SIZE, game.rect, screenSurface);
 
+		//* ------------ Draw ----------- *//	
+		game.Draw(screenSurface);
+		
+		//game._snake.draw(CELL_SIZE, &game.rect, screenSurface);
+		
 		// Render
 		SDL_UpdateWindowSurface( window );
 		
 		frame_time = SDL_GetTicks() - last_time;
 		fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
 		//printf("fps: %f\n", fps);
+
 	}
 	
 	//Destroy window

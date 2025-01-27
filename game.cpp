@@ -13,23 +13,26 @@ Game::Game()
 	step_time = 100;
 	cell_size = 20;
 
+	screen_width = 800;
+	screen_height = 800;
+
 	next_move_y[0] = 1;
 	next_move_x[0] = 0;
 
 	_snake = {0, 0, 0};
-	_snake._speed = 800 / cell_size;
+	_snake._speed = screen_width / cell_size;
 
 	rect = {_snake._x, _snake._y, screen_width / cell_size, screen_height / cell_size};
 }
 
-void Game::Draw()
+void Game::Draw(SDL_Surface *surface)
 {
-	_snake.draw(cell_size, rect, surface);	
+	_snake.draw(cell_size, &rect, surface);	
 }
 
 void Game::Update(float delta)
 {
-	current_step_time += delta;
+	current_step_time += SDL_GetTicks();
 
 	if (current_step_time >= step_time)
 	{
@@ -41,8 +44,8 @@ void Game::Update(float delta)
 			next_move_y.pop_front();
 		}
 		printf("snake dir_x: %i, dir_y: %i\n", _snake.direction_x , _snake.direction_y);
-		_snake.update();
 		_snake.move(_snake.direction_x,_snake.direction_y , delta);
+		_snake.update();
 		current_step_time = 0;
 	}
 

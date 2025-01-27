@@ -26,7 +26,7 @@ public:
 	int get_size();
 	void set_sizes(int new_size);
 	void grow(int n);
-	void draw(int cell_size, SDL_Rect rect, SDL_Surface *Surface);
+	void draw(int cell_size, SDL_Rect *rect, SDL_Surface *Surface);
 	void update();
 	std::vector<Cell> _body;
 
