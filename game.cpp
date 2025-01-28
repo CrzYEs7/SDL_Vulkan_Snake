@@ -1,38 +1,48 @@
 #include <iostream>
-#include <stdio.h>
 #include "game.h"
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
+#include "fruit.h"
 #include "snake.h"
 #include <deque>
-#include <ostream>
 
 Game::Game()
 {
 	current_step_time = 0;
 	last_time = 0;
 	step_time = 100;
-	cell_size = 20;
-
-	screen_width = 800;
-	screen_height = 800;
 
 	next_move_y[0] = 1;
 	next_move_x[0] = 0;
 
-	_snake = {0, 0, 0};
-	_snake._speed = screen_width / cell_size;
+	_snake = {1, 0, 0};
+	_snake._speed = CELL_SIZE;
 
-	rect = {_snake._x, _snake._y, screen_width / cell_size, screen_height / cell_size};
+	rect = {_snake._x, _snake._y, CELL_SIZE, CELL_SIZE};
+	
+	for (int i = 0; i < 6; i++)
+	{
+		Fruit fruit = {CELL_SIZE * i, CELL_SIZE * i * i};
+		fruit.rate = 1;
+
+		fruit_vector.emplace_back(fruit);
+
+	}
 }
 
 void Game::Draw(SDL_Surface *surface)
 {
-	_snake.draw(cell_size, &rect, surface);	
+	for(Fruit fruit : fruit_vector)
+	{
+		fruit.draw(surface, &rect);
+		std::cout << "fruit" << fruit.x << " , "  << fruit.y << std::endl;
+	}
+
+	_snake.draw(&rect, surface);	
 }
 
 void Game::Update(float delta)
 {
-	current_step_time += SDL_GetTicks();
+	current_step_time += delta;
 
 	if (current_step_time >= step_time)
 	{
@@ -43,18 +53,21 @@ void Game::Update(float delta)
 			next_move_x.pop_front();
 			next_move_y.pop_front();
 		}
-		printf("snake dir_x: %i, dir_y: %i\n", _snake.direction_x , _snake.direction_y);
-		_snake.move(_snake.direction_x,_snake.direction_y , delta);
-		_snake.update();
+
+		_snake.move(delta);
+		_snake.update(delta);
+
+		for (int i = 0; i < fruit_vector.size(); i++)
+		{
+			if (fruit_vector[i].x == _snake._x && fruit_vector[i].y == _snake._y)
+			{
+				_snake.grow(fruit_vector[i].rate);
+				fruit_vector.erase(fruit_vector.begin() + i);
+			}
+		}
+
 		current_step_time = 0;
 	}
-
-	if (_snake._x + screen_width / cell_size > screen_width ) _snake._x = 0;
-	if (_snake._y + screen_height / cell_size > screen_height) _snake._y = 0;
-	if (_snake._x < 0) _snake._x = screen_width - screen_width / cell_size;
-	if (_snake._y < 0) _snake._y = screen_height - screen_height / cell_size;
-
-	std::cout << "snake x" << _snake._x << "snake y" << _snake._y << std::endl;
 }
 
 void Game::Input(SDL_Event e)
@@ -81,5 +94,7 @@ void Game::Input(SDL_Event e)
 			next_move_y.emplace_back(0);
 			next_move_x.emplace_back(1);
 		}
+		if( e.key.keysym.sym == SDLK_SPACE )
+			_snake.grow(1);
 	}
 }

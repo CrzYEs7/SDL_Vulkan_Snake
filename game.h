@@ -1,27 +1,28 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <deque>
+#include <vector>
 #include "SDL2/SDL.h"
 #include "snake.h"
-#include <deque>
+#include "fruit.h"
 
 class Game
 {
 public:
 	Game();
 	~Game() = default;
+
+public:
+	SDL_Rect rect;
+	Snake _snake;
+	std::vector<Fruit> fruit_vector;
+
 public:
 	void Update(float delta);
 	void Draw(SDL_Surface *surface);
 	void Input(SDL_Event e);
 
-public:
-	int screen_width;
-	int screen_height;
-	int cell_size;
-	
-	SDL_Rect rect;
-	Snake _snake;
 private:
 	float last_time = SDL_GetTicks();
 
