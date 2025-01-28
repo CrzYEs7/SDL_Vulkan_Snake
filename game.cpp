@@ -4,6 +4,8 @@
 #include "fruit.h"
 #include "snake.h"
 #include <deque>
+#include <stdlib.h>
+#include <time.h>
 
 Game::Game()
 {
@@ -18,15 +20,11 @@ Game::Game()
 	_snake._speed = CELL_SIZE;
 
 	rect = {_snake._x, _snake._y, CELL_SIZE, CELL_SIZE};
-	
-	for (int i = 0; i < 6; i++)
-	{
-		Fruit fruit = {CELL_SIZE * i, CELL_SIZE * i * i};
-		fruit.rate = 1;
+	srand(time(NULL));
 
-		fruit_vector.emplace_back(fruit);
-
-	}
+	fruit_vector.emplace_back(Fruit(
+		rand() % RESOLUTION * CELL_SIZE, 
+		rand() % RESOLUTION * CELL_SIZE,1));
 }
 
 void Game::Draw(SDL_Surface *surface)
@@ -63,6 +61,10 @@ void Game::Update(float delta)
 			{
 				_snake.grow(fruit_vector[i].rate);
 				fruit_vector.erase(fruit_vector.begin() + i);
+
+				fruit_vector.emplace_back(Fruit(
+					rand() % RESOLUTION * CELL_SIZE, 
+					rand() % RESOLUTION * CELL_SIZE,1));
 			}
 		}
 

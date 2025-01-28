@@ -8,7 +8,7 @@
 class Fruit
 {
 public:
-	Fruit(int x, int y);
+	Fruit(int _x, int _y, int _rate);
 	~Fruit() = default;
 public:
 	void draw(SDL_Surface *surface, SDL_Rect *rect);
