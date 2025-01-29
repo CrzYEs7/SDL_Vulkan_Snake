@@ -11,24 +11,31 @@
 class Snake
 {
 public:
-	Snake(int size = 1, int x = 0, int  = 0);
+	Snake();
 	int _y = 0;
 	int _x = 0;
 	int direction_x = 0;
 	int direction_y = 0;
 	int _speed = 1;
 	Uint32 color = 0xffffffff;
+	std::vector<Cell> _body;
+	
+	enum States { DEAD, ALIVE, IMORTAL };
+	States state = ALIVE;
+
 
 public:
+	void set_speed(int new_speed);
 	void move_to(int x, int y);
 	void move(float delta);
 	int get_speed();
-	void set_speed(int new_speed);
-	int get_size();
 	void grow(int n);
+	void shrink(int n);
+	void revive();
+
+public:
 	void draw(SDL_Rect *rect, SDL_Surface *Surface);
 	void update(float delta);
-	std::vector<Cell> _body;
 
 private:
 	int _size = 1;

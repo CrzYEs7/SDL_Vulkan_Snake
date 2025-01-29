@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include "globals.h"
 #include "game.h"
+#include <iostream>
 
 int main(int argc, char* args[])
 { 
@@ -13,8 +14,11 @@ int main(int argc, char* args[])
 		return 0;
 
 	SDL_Surface* screenSurface = SDL_GetWindowSurface( window );
-
+	
 	Game game;
+	//game.text->Renderer = SDL_CreateRenderer(window, -1, 0); 
+	//if (!game.text->Renderer)
+	//	std::cout << "There was a problem creating the renderer.";
 
 	float frame_time = SDL_GetTicks();
 	float last_time = SDL_GetTicks();

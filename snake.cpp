@@ -1,14 +1,10 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "snake.h"
+#include "fruit.h"
 
-Snake::Snake(int size, int x, int y)
+Snake::Snake()
 {
-	_size = size;
-	_x = x;
-	_y = y;
-	_speed = 1;
-
 	for (int i = 0; i < _size; i++)
 	{
 		Cell new_cell;
@@ -43,17 +39,21 @@ void Snake::update(float delta)
 	if (_x < 0) _x = SCREEN_SIZE - CELL_SIZE;
 	if (_y < 0) _y = SCREEN_SIZE - CELL_SIZE;
 
-	for (int i = _body.size() - 1; i >= 1; i--)
+	for (int i = _size - 1; i > 0; i--)
 	{
+
+		if ( _size > 0 && _body[0].x == _body[i].x && _body[0].y == _body[i].y)
+		{
+			state = DEAD;
+		}
+
 		_body[i].x = _body[i-1].x;
 		_body[i].y = _body[i-1].y;
-		std::cout << "cell :" << i << " x: " << _body[i].x << " y: " << _body[i].y << std::endl;
 	}
 
 	_body[0].x = _x;
 	_body[0].y = _y;
 
-	std::cout << "cell : " << 0 << " x: " << _body[0].x << " y: " << _body[0].y << std::endl;
 }
 
 void Snake::move_to(int x, int y)
@@ -64,13 +64,8 @@ void Snake::move_to(int x, int y)
 
 void Snake::move(float delta)
 {
-	_x += direction_x * _speed;
-	_y += direction_y * _speed;
-}
-
-int Snake::get_size()
-{
-	return _size;
+	_x += direction_x * CELL_SIZE;
+	_y += direction_y * CELL_SIZE;
 }
 
 int Snake::get_speed()
@@ -95,4 +90,17 @@ void Snake::grow(int n)
 	_size += n;
 }
 
+void Snake::shrink(int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		_body.pop_back();
+	}
+	
+	_size -= n;
+}
 
+void Snake::revive()
+{
+	state = ALIVE;
+}
