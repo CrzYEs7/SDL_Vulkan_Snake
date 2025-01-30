@@ -34,6 +34,7 @@ void Game::Draw(SDL_Surface *surface)
 	{
 		SDL_FillRect(surface, NULL, 0x22ffffff);
 		//text->RenderText();	
+		return;
 	}
 
 	for(Fruit fruit : fruit_vector)

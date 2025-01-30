@@ -6,7 +6,7 @@
 #include "SDL2/SDL.h"
 #include "snake.h"
 #include "fruit.h"
-//#include "text.h"
+#include "text.h"
 
 class Game
 {
@@ -15,7 +15,7 @@ public:
 	~Game() = default;
 
 public:
-	//Text* text;
+	Text* text;
 	SDL_Rect rect;
 	Snake _snake;
 	std::vector<Fruit> fruit_vector;

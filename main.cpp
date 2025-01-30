@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include "SDL2/SDL_error.h"
 #include "globals.h"
 #include "game.h"
 #include <iostream>
+#include <SDL2/SDL_ttf.h>
+#include "text.h"
 
 int main(int argc, char* args[])
 { 
@@ -14,13 +17,22 @@ int main(int argc, char* args[])
 		return 0;
 
 	SDL_Surface* screenSurface = SDL_GetWindowSurface( window );
-	
-	Game game;
-	//game.text->Renderer = SDL_CreateRenderer(window, -1, 0); 
-	//if (!game.text->Renderer)
-	//	std::cout << "There was a problem creating the renderer.";
+    SDL_Surface* textSurface = SDL_GetWindowSurface( window);
+    Text text;
 
-	float frame_time = SDL_GetTicks();
+    TTF_Init();
+	Game game;
+
+
+	text.Renderer = SDL_CreateRenderer(window, -1, 0); 
+    SDL_GetError();
+	if (!text.Renderer)
+		std::cout << "There was a problem creating the renderer." << SDL_GetError();
+
+	text.CreateText("Press Enter!");
+    text.RenderText();
+	
+    float frame_time = SDL_GetTicks();
 	float last_time = SDL_GetTicks();
 	float fps = 0;
 

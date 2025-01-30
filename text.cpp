@@ -1,13 +1,18 @@
 #include "text.h"
 #include <iostream>
+#include <ostream>
+#include "SDL2/SDL_ttf.h"
 #include "globals.h"
 
 void Text::CreateText(const char* Message) 
-{	
-    TTF_Init();
+{
+
+    //int tff = TTF_Init();
     TTF_Font *font = TTF_OpenFont(FONT_NAME, FONT_SIZE);
     if (!font)
         std::cout << "Couldn't find/init open ttf font." << std::endl;
+   
+    
     TextSurface = TTF_RenderText_Solid(font, Message, TextColor);
     TextTexture = SDL_CreateTextureFromSurface(Renderer, TextSurface);
     TextRect.x = SCREEN_SIZE - TextSurface->w * 0.5; // Center SCREEN_SIZETextRect.y = WINDOW_HEIGHT - TextSurface->h * 0.5; // Center verticaly
