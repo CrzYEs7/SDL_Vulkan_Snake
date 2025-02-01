@@ -1,38 +1,31 @@
 #include "text.h"
-#include <iostream>
+#include <SDL2/SDL_ttf.h>
 #include <ostream>
-#include "SDL2/SDL_ttf.h"
 #include "globals.h"
 
-void Text::CreateText(const char* Message) 
+
+Text::Text(char* font_name, char* content, int size, SDL_Color foreground_color, SDL_Color background_color)
 {
+    if (TTF_Init() < 0) {
+        printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
+        SDL_Quit();
+    }
 
-    //int tff = TTF_Init();
-    TTF_Font *font = TTF_OpenFont(FONT_NAME, FONT_SIZE);
-    if (!font)
-        std::cout << "Couldn't find/init open ttf font." << std::endl;
-   
-    
-    TextSurface = TTF_RenderText_Solid(font, Message, TextColor);
-    TextTexture = SDL_CreateTextureFromSurface(Renderer, TextSurface);
-    TextRect.x = SCREEN_SIZE - TextSurface->w * 0.5; // Center SCREEN_SIZETextRect.y = WINDOW_HEIGHT - TextSurface->h * 0.5; // Center verticaly
-    TextRect.y = SCREEN_SIZE - TextSurface->h * 0.5; // Center verticaly
-    TextRect.h = TextSurface->h;
-    // After you create the texture you can release the surface memory allocation because we actually render the texture not the surface.
-    SDL_FreeSurface(TextSurface);
-    TTF_Quit();
+    m_font = TTF_OpenFont(font_name , size);
+    if (m_font == NULL)
+        std::cout << "Font not created" << std::endl;
+    m_text_surface = TTF_RenderText_Shaded(m_font, content, foreground_color, background_color);
 }
 
-
-void Text::RenderText() {
-    SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255); // Make window bg black.
-    SDL_RenderClear(Renderer); // Paint screen black.
-    SDL_RenderCopy(Renderer, TextTexture, NULL, &TextRect); // Add text to render queue.
-    SDL_RenderPresent(Renderer); // Render everything that's on the queue.
-    SDL_Delay(10); // Delay to prevent CPU overhead as suggested by the user `not2qubit`
+void Text::drawText(SDL_Surface* screen, int x, int y)
+{
+    SDL_Rect text_location = { x, y, 0, 0 };
+    SDL_BlitSurface(m_text_surface, NULL, screen, &text_location);
 }
 
-void Text::ClearMemory() {
-    SDL_DestroyTexture(TextTexture);
-    SDL_DestroyRenderer(Renderer);
+Text::~Text()
+{
+    std::cout << "text drestroyed" << std::endl;
+    SDL_FreeSurface(m_text_surface);
+    TTF_CloseFont(m_font);
 }

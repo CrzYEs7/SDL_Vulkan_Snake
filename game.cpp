@@ -1,7 +1,9 @@
 #include <iostream>
 #include "game.h"
 #include <SDL2/SDL.h>
+#include <string>
 #include "SDL2/SDL_keycode.h"
+#include "SDL2/SDL_pixels.h"
 #include "fruit.h"
 #include "snake.h"
 #include <deque>
@@ -11,6 +13,11 @@
 
 Game::Game()
 {
+    //if (TTF_Init() < 0) {
+    //    printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
+    //}
+
+    //text = Text((char*)"NovaSquareRegular.ttf", (char*)"Press Enter to Start!", 46, SDL_Color{255,255,255,255}, SDL_Color{00,00,00,00});
 	current_step_time = 0;
 	last_time = 0;
 	step_time = 100;
@@ -32,17 +39,20 @@ void Game::Draw(SDL_Surface *surface)
 {
 	if ( state == PAUSED )
 	{
-		SDL_FillRect(surface, NULL, 0x22ffffff);
-		//text->RenderText();	
-		return;
-	}
+		//SDL_FillRect(surface, NULL, 0x22ffffff);
+		text.drawText(surface, 50, 50);
+	    return;
+    }
 
 	for(Fruit fruit : fruit_vector)
 	{
 		fruit.draw(surface, &rect);
 	}
-
+    
 	_snake.draw(&rect, surface);	
+
+    Text score_text((char*)"NovaSquare-Regular.ttf", (char*)std::to_string(score).c_str(), 20, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+    score_text.drawText(surface, SCREEN_SIZE - 50, 10);
 }
 
 void Game::Update(float delta)
@@ -74,6 +84,7 @@ void Game::Update(float delta)
 		{
 			if (fruit_vector[i].x == _snake._x && fruit_vector[i].y == _snake._y)
 			{
+                score ++;
 				_snake.grow(fruit_vector[i].rate);
 				fruit_vector.erase(fruit_vector.begin() + i);
 
@@ -128,6 +139,7 @@ void Game::Input(SDL_Event e)
 
 void Game::Restart()
 {
+    score = 0;
 	_snake.shrink(_snake._body.size() - 1);
 	_snake._x = SCREEN_SIZE / 2;
 	_snake._y = SCREEN_SIZE / 2;

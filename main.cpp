@@ -5,6 +5,7 @@
 #include "game.h"
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_render.h>
 #include "text.h"
 
 int main(int argc, char* args[])
@@ -17,20 +18,23 @@ int main(int argc, char* args[])
 		return 0;
 
 	SDL_Surface* screenSurface = SDL_GetWindowSurface( window );
-    SDL_Surface* textSurface = SDL_GetWindowSurface( window);
-    Text text;
 
-    TTF_Init();
-	Game game;
+    // Initialize SDL_ttf
+    //if (TTF_Init() < 0) {
+    //    printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
+    //    SDL_Quit();
+    //    return EXIT_FAILURE;
+    //}
 
-
-	text.Renderer = SDL_CreateRenderer(window, -1, 0); 
-    SDL_GetError();
-	if (!text.Renderer)
-		std::cout << "There was a problem creating the renderer." << SDL_GetError();
-
-	text.CreateText("Press Enter!");
-    text.RenderText();
+    //Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 38, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+    
+    TTF_Font* font = TTF_OpenFont("NovaSquare-Regular.ttf", 30);
+    SDL_Rect textLocation = { 100, 100, 0, 0 };
+    SDL_Color foregroundColor = { 255, 255, 255 };
+    SDL_Color backgroundColor = { 0, 0, 0, 0 };
+    SDL_Surface* textSurface = TTF_RenderText_Shaded(font, "Press <Enter> to play!", foregroundColor, backgroundColor);
+	
+    Game game;
 	
     float frame_time = SDL_GetTicks();
 	float last_time = SDL_GetTicks();
@@ -55,9 +59,18 @@ int main(int argc, char* args[])
 
 		//* ------------ Update --------- *//	
 		game.Update(frame_time);	
-		
+
 		// Clear Screen
 		SDL_FillRect( screenSurface, NULL, 0x00000000);
+
+	    if (game.state == game.PAUSED)
+        {
+            //SDL_BlitSurface(textSurface, NULL, screenSurface, &textLocation);
+            //text.drawText(screenSurface, "Press Enter to Play!", "NovaSquare-Regular.ttf", 40, SCREEN_SIZE/2, SCREEN_SIZE/2,
+            //              255, 255, 255, 0, 0, 0);
+            
+		    //text.drawText(screenSurface, 50, 50);
+        }
 
 		//* ------------ Draw ----------- *//	
 		game.Draw(screenSurface);
