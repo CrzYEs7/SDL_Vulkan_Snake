@@ -4,9 +4,15 @@
 #include <deque>
 #include <vector>
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_events.h"
 #include "snake.h"
 #include "fruit.h"
 #include "text.h"
+
+namespace game
+{
+	enum States { PAUSED, RUNNING, GAMEOVER };
+}
 
 class Game
 {
@@ -15,16 +21,17 @@ public:
 	~Game() = default;
 
 public:
-	Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 46, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-	SDL_Rect rect;
+	Text start_text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 46, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+	Text pause_text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Paused, press Enter to play!", 46, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});   
+    SDL_Rect rect;
 	Snake _snake;
 	std::vector<Fruit> fruit_vector;
-	enum States { PAUSED, RUNNING };
-	States state = PAUSED; 
+    game::States state = game::GAMEOVER; 
 	int score = 0;
 
 public:
 	void Restart();
+    void InputStateHandler(SDL_Event);
 
 public:
 	void Update(float delta);

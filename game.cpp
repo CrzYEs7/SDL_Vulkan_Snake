@@ -2,6 +2,7 @@
 #include "game.h"
 #include <SDL2/SDL.h>
 #include <string>
+#include "SDL2/SDL_events.h"
 #include "SDL2/SDL_keycode.h"
 #include "SDL2/SDL_pixels.h"
 #include "fruit.h"
@@ -18,9 +19,9 @@ Game::Game()
     //}
 
     //text = Text((char*)"NovaSquareRegular.ttf", (char*)"Press Enter to Start!", 46, SDL_Color{255,255,255,255}, SDL_Color{00,00,00,00});
-	current_step_time = 0;
+    current_step_time = 0;
 	last_time = 0;
-	step_time = 100;
+	step_time = 120;
 
 	next_move_y[0] = 1;
 	next_move_x[0] = 0;
@@ -28,20 +29,30 @@ Game::Game()
 	rect = {_snake._x, _snake._y, CELL_SIZE, CELL_SIZE};
 	srand(time(NULL));
 
-	fruit_vector.emplace_back(Fruit(
-		rand() % RESOLUTION * CELL_SIZE, 
-		rand() % RESOLUTION * CELL_SIZE,1));
+    fruit_vector.reserve(41);
 
+    for (int i = 0; i < 0; i++)
+    {
+        fruit_vector.emplace_back(Fruit(
+            rand() % RESOLUTION * CELL_SIZE, 
+            rand() % RESOLUTION * CELL_SIZE,1));
+    }
 	//text->CreateText("Press Enter!");
 }
 
 void Game::Draw(SDL_Surface *surface)
 {
-	if ( state == PAUSED )
+    Text score_text((char*)"NovaSquare-Regular.ttf", (char*)std::to_string(score).c_str(), 20, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+    score_text.drawText(surface, SCREEN_SIZE - 50, 10);
+
+	if (state == game::GAMEOVER)
 	{
-		//SDL_FillRect(surface, NULL, 0x22ffffff);
-		text.drawText(surface, 50, 50);
+		start_text.drawText(surface, 50, 50);
 	    return;
+    }
+    if (state == game::PAUSED)
+    {
+        pause_text.drawText(surface, 20, 10);
     }
 
 	for(Fruit fruit : fruit_vector)
@@ -50,14 +61,11 @@ void Game::Draw(SDL_Surface *surface)
 	}
     
 	_snake.draw(&rect, surface);	
-
-    Text score_text((char*)"NovaSquare-Regular.ttf", (char*)std::to_string(score).c_str(), 20, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-    score_text.drawText(surface, SCREEN_SIZE - 50, 10);
 }
 
 void Game::Update(float delta)
 {
-	if (state == PAUSED)
+	if (state == game::PAUSED || state == game::GAMEOVER)
 		return;
 
 	current_step_time += delta;
@@ -77,9 +85,8 @@ void Game::Update(float delta)
 		
 		if (_snake.state == _snake.DEAD)
 		{
-			state = PAUSED;
-			Restart();
-		}
+        	state = game::GAMEOVER;
+        }
 		for (int i = 0; i < fruit_vector.size(); i++)
 		{
 			if (fruit_vector[i].x == _snake._x && fruit_vector[i].y == _snake._y)
@@ -100,41 +107,35 @@ void Game::Update(float delta)
 
 void Game::Input(SDL_Event e)
 {
-	if ( state == PAUSED )
-	{
-		if( e.key.keysym.sym == SDLK_RETURN)
-		{
-			Restart();
-			state = RUNNING;
-		}
-		return;
-	}
-	if (e.key.type == SDL_KEYDOWN)
-	{
-		if( e.key.keysym.sym == SDLK_UP )
-		{
-			next_move_y.emplace_back(-1);
-			next_move_x.emplace_back(0);
-		}
-		if( e.key.keysym.sym == SDLK_DOWN )
-		{
-			next_move_y.emplace_back(1);
-			next_move_x.emplace_back(0);
-		}
-		if( e.key.keysym.sym == SDLK_LEFT )
-		{
-			next_move_y.emplace_back(0);
-			next_move_x.emplace_back(-1);
-		}
-		if( e.key.keysym.sym == SDLK_RIGHT )
-		{
-			next_move_y.emplace_back(0);
-			next_move_x.emplace_back(1);
-		}
-		// DEBUG
-		if( e.key.keysym.sym == SDLK_SPACE )
-			_snake.grow(1);
-	}
+
+    Game::InputStateHandler(e);
+
+    if (e.key.type == SDL_KEYDOWN)
+    {
+        if( e.key.keysym.sym == SDLK_UP )
+        {
+            next_move_y.emplace_back(-1);
+            next_move_x.emplace_back(0);
+        }
+        if( e.key.keysym.sym == SDLK_DOWN )
+        {
+            next_move_y.emplace_back(1);
+            next_move_x.emplace_back(0);
+        }
+        if( e.key.keysym.sym == SDLK_LEFT )
+        {
+            next_move_y.emplace_back(0);
+            next_move_x.emplace_back(-1);
+        }
+        if( e.key.keysym.sym == SDLK_RIGHT )
+        {
+            next_move_y.emplace_back(0);
+            next_move_x.emplace_back(1);
+        }
+        // DEBUG
+        if( e.key.keysym.sym == SDLK_SPACE )
+            _snake.grow(1);
+    }
 }
 
 void Game::Restart()
@@ -148,6 +149,39 @@ void Game::Restart()
 	fruit_vector.emplace_back(Fruit(
 		rand() % RESOLUTION * CELL_SIZE, 
 		rand() % RESOLUTION * CELL_SIZE,1));
+    for (int i = 0; i < 0; i++)
+    {
+        fruit_vector.emplace_back(Fruit(
+            rand() % RESOLUTION * CELL_SIZE, 
+            rand() % RESOLUTION * CELL_SIZE,1));
+    }
 	
-	_snake.revive();
+	_snake.restart();
+}
+
+void Game::InputStateHandler(SDL_Event e)
+{
+    switch (state)
+    {
+        case game::PAUSED :
+            if( e.key.keysym.sym == SDLK_RETURN)
+            {
+                state = game::RUNNING;
+            }
+            break;
+        case game::RUNNING :
+            if( e.key.keysym.sym == SDLK_p)
+            {
+                state = game::PAUSED;
+            }
+            break;
+        case game::GAMEOVER :
+            if( e.key.keysym.sym == SDLK_RETURN)
+            {
+                state = game::RUNNING;
+                Restart();
+                return;
+            }
+            break;
+    }
 }

@@ -28,10 +28,10 @@ public:
 	void set_speed(int new_speed);
 	void move_to(int x, int y);
 	void move(float delta);
-	int get_speed();
 	void grow(int n);
 	void shrink(int n);
-	void revive();
+	void restart();
+	int get_speed();
 
 public:
 	void draw(SDL_Rect *rect, SDL_Surface *Surface);

@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include "SDL2/SDL_error.h"
-#include "globals.h"
-#include "game.h"
-#include <iostream>
+#include <string>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_render.h>
+#include <iostream>
+#include "globals.h"
+#include "game.h"
 #include "text.h"
 
 int main(int argc, char* args[])
@@ -20,13 +20,13 @@ int main(int argc, char* args[])
 	SDL_Surface* screenSurface = SDL_GetWindowSurface( window );
 
     // Initialize SDL_ttf
-    //if (TTF_Init() < 0) {
-    //    printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
-    //    SDL_Quit();
-    //    return EXIT_FAILURE;
-    //}
+    if (TTF_Init() < 0) {
+        printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
 
-    //Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 38, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+    Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 38, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
     
     TTF_Font* font = TTF_OpenFont("NovaSquare-Regular.ttf", 30);
     SDL_Rect textLocation = { 100, 100, 0, 0 };
@@ -36,8 +36,8 @@ int main(int argc, char* args[])
 	
     Game game;
 	
-    float frame_time = SDL_GetTicks();
-	float last_time = SDL_GetTicks();
+    float frame_time = 0;
+	float last_time = 0;
 	float fps = 0;
 
 	bool quit = false;
@@ -49,7 +49,7 @@ int main(int argc, char* args[])
 		while( SDL_PollEvent( &e ) )
 		{ 
 			if( e.type == SDL_QUIT )
-				quit = true;
+				quit = true; 
 
 		//* ------------ Input ------------- *//
 			game.Input(e);	
@@ -60,25 +60,20 @@ int main(int argc, char* args[])
 		//* ------------ Update --------- *//	
 		game.Update(frame_time);	
 
-		// Clear Screen
-		SDL_FillRect( screenSurface, NULL, 0x00000000);
-
-	    if (game.state == game.PAUSED)
-        {
-            //SDL_BlitSurface(textSurface, NULL, screenSurface, &textLocation);
-            //text.drawText(screenSurface, "Press Enter to Play!", "NovaSquare-Regular.ttf", 40, SCREEN_SIZE/2, SCREEN_SIZE/2,
-            //              255, 255, 255, 0, 0, 0);
-            
-		    //text.drawText(screenSurface, 50, 50);
-        }
 
 		//* ------------ Draw ----------- *//	
+		// Clear Screen
+		SDL_FillRect( screenSurface, NULL, 0x00000000);
+        
 		game.Draw(screenSurface);
-		
+
+        //Text fps_text = Text((char*)"NovaSquare-Regular.ttf", (char*)(std::to_string(fps).c_str()) , 20, SDL_Color{0,255,0,255}, SDL_Color{0,0,0,0});
+        //fps_text.drawText(screenSurface, (SCREEN_SIZE / 2) - 10, 5);
+
 		SDL_UpdateWindowSurface( window );
 		
-		frame_time = SDL_GetTicks() - last_time;
-		fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+		frame_time = SDL_GetTicks() - float(last_time);
+		fps = (frame_time > 0.0f) ? 1000.0f / float(frame_time) : 0.0f;
 		//printf("fps: %f\n", fps);
 	}
 	
@@ -86,7 +81,7 @@ int main(int argc, char* args[])
 	SDL_DestroyWindow( window );
 	
 	//Quit SDL subsystems
-        SDL_Quit();
+    SDL_Quit();
 	
 	return 0;
 }

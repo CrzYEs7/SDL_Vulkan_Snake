@@ -100,7 +100,7 @@ void Snake::shrink(int n)
 	_size -= n;
 }
 
-void Snake::revive()
+void Snake::restart()
 {
 	state = ALIVE;
 }
