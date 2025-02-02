@@ -1,8 +1,16 @@
+#include <array>
+#include <cstring>
+#include <fstream>
+#include <ios>
 #include <iostream>
 #include "game.h"
 #include <SDL2/SDL.h>
+#include <istream>
+#include <stdio.h>
+#include <string.h>
 #include <string>
 #include "SDL2/SDL_events.h"
+#include "SDL2/SDL_keyboard.h"
 #include "SDL2/SDL_keycode.h"
 #include "SDL2/SDL_pixels.h"
 #include "fruit.h"
@@ -48,7 +56,19 @@ void Game::Draw(SDL_Surface *surface)
 	if (state == game::GAMEOVER)
 	{
 		start_text.drawText(surface, 50, 50);
-	    return;
+        int y_pos = 0;
+        for(auto _score : score_board)
+        {
+            std::string name = _score.first;
+            std::string score = std::to_string(_score.second);
+            std::string line = name + " : " + score;
+            std::cout << "line " << line << std::endl;
+            y_pos += 15;
+            Text score_text((char*)"NovaSquare-Regular.ttf", (char*)line.c_str(), 10, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+            score_text.drawText(surface, SCREEN_SIZE - 200, y_pos);
+
+        }
+        return;
     }
     if (state == game::PAUSED)
     {
@@ -65,9 +85,9 @@ void Game::Draw(SDL_Surface *surface)
 
 void Game::Update(float delta)
 {
-	if (state == game::PAUSED || state == game::GAMEOVER)
+	if (state != game::RUNNING)
 		return;
-
+        
 	current_step_time += delta;
 
 	if (current_step_time >= step_time)
@@ -85,7 +105,9 @@ void Game::Update(float delta)
 		
 		if (_snake.state == _snake.DEAD)
 		{
-        	state = game::GAMEOVER;
+            player_name = "";
+            SDL_StartTextInput();
+        	state = game::SAVESCORE;
         }
 		for (int i = 0; i < fruit_vector.size(); i++)
 		{
@@ -136,6 +158,11 @@ void Game::Input(SDL_Event e)
         if( e.key.keysym.sym == SDLK_SPACE )
             _snake.grow(1);
     }
+    else if( e.type == SDL_TEXTINPUT )
+    {
+        player_name += e.text.text;
+    }
+
 }
 
 void Game::Restart()
@@ -161,6 +188,9 @@ void Game::Restart()
 
 void Game::InputStateHandler(SDL_Event e)
 {
+    if (e.type != SDL_KEYDOWN)
+        return;
+
     switch (state)
     {
         case game::PAUSED :
@@ -183,5 +213,67 @@ void Game::InputStateHandler(SDL_Event e)
                 return;
             }
             break;
+        case game::SAVESCORE :
+            if (e.key.keysym.sym == SDLK_RETURN)
+            {
+                SaveScore(player_name);
+                SDL_StopTextInput();
+                score_board = LoadScores();
+                state = game::GAMEOVER;
+                return;
+            }
+            break;
     }
+}
+
+void Game::SaveScore(std::string player_name)
+{
+    std::ofstream scores;
+    scores.open("scores.dat", std::ios::app);
+    scores << player_name << ":" << score << "\n" ;
+    std::cout << "score saved :" << score << std::endl;
+    scores.close();
+}
+
+std::vector<std::pair<std::string,int>> Game::LoadScores()
+{
+    std::ifstream file_scores;
+
+    std::string name = "";
+    int score;
+    
+    std::string temp;
+    char c;
+
+    std::vector<std::pair<std::string,int>> scores_vector;
+    scores_vector.reserve(10);
+
+    file_scores.open("scores.dat");
+
+    while(file_scores)
+    {
+        c = file_scores.get();
+        temp += c;
+
+        std::cout << "c" << c << std::endl;
+        std::cout << "temp" << temp << std::endl;
+        if (std::strcmp(&c, ":"))
+        {
+            temp.pop_back();
+            name = temp;
+            std::cout << "got the name" << name << std::endl;
+            temp = "";
+        }
+        else if (std::strcmp(&c, "\n"))
+        {
+            temp.pop_back();
+            score = std::stoi(temp);
+            std::pair<std::string, int> pair = {name, score};
+            scores_vector.emplace_back(pair);
+            temp = "";
+        }
+        //std::cout << scores << std::endl;
+    }
+    file_scores.close();
+    return scores_vector;
 }

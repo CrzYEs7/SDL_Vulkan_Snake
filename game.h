@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <vector>
+#include <fstream>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_events.h"
 #include "snake.h"
@@ -11,7 +12,7 @@
 
 namespace game
 {
-	enum States { PAUSED, RUNNING, GAMEOVER };
+	enum States { PAUSED, RUNNING, GAMEOVER , SAVESCORE};
 }
 
 class Game
@@ -40,13 +41,18 @@ public:
 
 private:
 	float last_time = SDL_GetTicks();
-    
 	float current_step_time;
 	float step_time;
-	
+
+    std::vector<std::pair<std::string,int>> score_board;
+    std::string player_name;	
+
 	std::deque<int> next_move_y;
 	std::deque<int> next_move_x;
 
+private:
+    void SaveScore(std::string player_name);
+    std::vector<std::pair<std::string,int>> LoadScores();
 };
 
 #endif

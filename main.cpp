@@ -4,6 +4,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
+#include "SDL2/SDL_stdinc.h"
+#include "SDL2/SDL_timer.h"
 #include "globals.h"
 #include "game.h"
 #include "text.h"
@@ -28,18 +30,13 @@ int main(int argc, char* args[])
 
     Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 38, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
     
-    TTF_Font* font = TTF_OpenFont("NovaSquare-Regular.ttf", 30);
-    SDL_Rect textLocation = { 100, 100, 0, 0 };
-    SDL_Color foregroundColor = { 255, 255, 255 };
-    SDL_Color backgroundColor = { 0, 0, 0, 0 };
-    SDL_Surface* textSurface = TTF_RenderText_Shaded(font, "Press <Enter> to play!", foregroundColor, backgroundColor);
-	
     Game game;
 	
-    float frame_time = 0;
-	float last_time = 0;
-	float fps = 0;
-
+    double frame_time = 0;
+	double begin_frame_time = 0;
+	double end_frame_time = 0;
+    double fps = 0;
+    double fps_limit = 165;
 	bool quit = false;
 
 	while( !quit )
@@ -55,7 +52,7 @@ int main(int argc, char* args[])
 			game.Input(e);	
 		}
 		
-		last_time = SDL_GetTicks();
+		begin_frame_time = end_frame_time;
 
 		//* ------------ Update --------- *//	
 		game.Update(frame_time);	
@@ -64,17 +61,23 @@ int main(int argc, char* args[])
 		//* ------------ Draw ----------- *//	
 		// Clear Screen
 		SDL_FillRect( screenSurface, NULL, 0x00000000);
-        
+                
 		game.Draw(screenSurface);
 
-        //Text fps_text = Text((char*)"NovaSquare-Regular.ttf", (char*)(std::to_string(fps).c_str()) , 20, SDL_Color{0,255,0,255}, SDL_Color{0,0,0,0});
-        //fps_text.drawText(screenSurface, (SCREEN_SIZE / 2) - 10, 5);
+        Text fps_text = Text((char*)"NovaSquare-Regular.ttf", (char*)(std::to_string(fps).c_str()) , 20, SDL_Color{0,255,0,255}, SDL_Color{0,0,0,0});
+        fps_text.drawText(screenSurface, (SCREEN_SIZE / 2) - 10, 5);
 
 		SDL_UpdateWindowSurface( window );
 		
-		frame_time = SDL_GetTicks() - float(last_time);
-		fps = (frame_time > 0.0f) ? 1000.0f / float(frame_time) : 0.0f;
-		//printf("fps: %f\n", fps);
+        end_frame_time = SDL_GetPerformanceCounter();
+		frame_time = ((end_frame_time - begin_frame_time) * 1000) / SDL_GetPerformanceFrequency();
+        
+        double delay = (1000.0f/fps_limit) - frame_time;
+        if (delay > 0.0f)
+            SDL_Delay(delay);
+        if (frame_time > 0.0f)
+            fps = SDL_round(1000 / frame_time);
+        //printf("fps: %f\n", fps);
 	}
 	
 	//Destroy window
