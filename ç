@@ -14,7 +14,6 @@
 #include "SDL2/SDL_keyboard.h"
 #include "SDL2/SDL_keycode.h"
 #include "SDL2/SDL_pixels.h"
-#include "SDL2/SDL_surface.h"
 #include "fruit.h"
 #include "snake.h"
 #include <deque>
@@ -48,7 +47,6 @@ Game::Game()
             rand() % RESOLUTION * CELL_SIZE,1));
     }
 	//text->CreateText("Press Enter!");
-    score_board = LoadScores();
 }
 
 void Game::Draw(SDL_Surface *surface)
@@ -59,13 +57,23 @@ void Game::Draw(SDL_Surface *surface)
 	if (state == game::GAMEOVER)
 	{
 		start_text.drawText(surface, 50, 50);
-        DrawScores(10, surface);
+        int y_pos = 0;
+        for(auto _score : score_board)
+        {
+            std::string name = _score.first;
+            std::string score = std::to_string(_score.second);
+            std::string line = name + " : " + score;
+            std::cout << "line " << line << std::endl;
+            y_pos += 15;
+            Text score_text((char*)"NovaSquare-Regular.ttf", (char*)line.c_str(), 10, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+            score_text.drawText(surface, SCREEN_SIZE - 200, y_pos);
+
+        }
         return;
     }
     if (state == game::PAUSED)
     {
         pause_text.drawText(surface, 20, 10);
-        DrawScores(10, surface);
     }
 
 	for(Fruit fruit : fruit_vector)
@@ -253,8 +261,6 @@ std::vector<std::pair<std::string,int>> Game::LoadScores()
         {
             temp.pop_back();
             name = temp;
-            if ( name.empty() )
-                name = "NoName";
             std::cout << "got the name" << name << std::endl;
             temp = "";
         }
@@ -271,29 +277,4 @@ std::vector<std::pair<std::string,int>> Game::LoadScores()
     file_scores.close();
     std::sort(scores_vector.begin(), scores_vector.end(), scores_sort);
     return scores_vector;
-}
-
-void Game::DrawScores(int n_of_scores, SDL_Surface* surface)
-{
-    int line_pos_y = 0;
-    int count = 0; 
-
-    if (score_board.empty())
-        return;
-
-    for(auto _score : score_board)
-    {
-        if ( count > n_of_scores)
-            break;
-
-        std::string name = _score.first;
-        std::string score = std::to_string(_score.second);
-        std::string line = name + " : " + score;
-        std::cout << "line " << line << std::endl;
-        line_pos_y += 15;
-        Text score_text((char*)"NovaSquare-Regular.ttf", (char*)line.c_str(), 15, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-        score_text.drawText(surface, SCREEN_SIZE - 200, line_pos_y);
-        count++;
-    }
-
 }

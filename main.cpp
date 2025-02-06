@@ -64,8 +64,8 @@ int main(int argc, char* args[])
                 
 		game.Draw(screenSurface);
 
-        Text fps_text = Text((char*)"NovaSquare-Regular.ttf", (char*)(std::to_string(fps).c_str()) , 20, SDL_Color{0,255,0,255}, SDL_Color{0,0,0,0});
-        fps_text.drawText(screenSurface, (SCREEN_SIZE / 2) - 10, 5);
+        Text fps_text = Text((char*)"NovaSquare-Regular.ttf", (char*)(std::to_string(fps).c_str()) , 10, SDL_Color{0,255,0,255}, SDL_Color{0,0,0,0});
+        fps_text.drawText(screenSurface, 10, 5);
 
 		SDL_UpdateWindowSurface( window );
 		

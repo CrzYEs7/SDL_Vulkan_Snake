@@ -15,6 +15,14 @@ namespace game
 	enum States { PAUSED, RUNNING, GAMEOVER , SAVESCORE};
 }
 
+struct vect_pair_sort
+{
+    bool operator()(std::pair<std::string, int> a, std::pair<std::string, int> b) const
+    {
+        return a.second > b.second;
+    }
+};
+
 class Game
 {
 public:
@@ -29,6 +37,7 @@ public:
 	std::vector<Fruit> fruit_vector;
     game::States state = game::GAMEOVER; 
 	int score = 0;
+    int number_scores_to_show = 10;
 
 public:
 	void Restart();
@@ -50,9 +59,12 @@ private:
 	std::deque<int> next_move_y;
 	std::deque<int> next_move_x;
 
+    vect_pair_sort scores_sort;
+
 private:
     void SaveScore(std::string player_name);
     std::vector<std::pair<std::string,int>> LoadScores();
+    void DrawScores(int n_of_scores, SDL_Surface* surface);
 };
 
 #endif
