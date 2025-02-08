@@ -1,12 +1,11 @@
 #include <algorithm>
-#include <array>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <ios>
 #include <iostream>
 #include "game.h"
 #include <SDL2/SDL.h>
-#include <istream>
 #include <stdio.h>
 #include <string.h>
 #include <string>
@@ -53,71 +52,106 @@ Game::Game()
 
 void Game::Draw(SDL_Surface *surface)
 {
-    Text score_text((char*)"NovaSquare-Regular.ttf", (char*)std::to_string(score).c_str(), 20, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-    score_text.drawText(surface, SCREEN_SIZE - 50, 10);
-
+    
 	if (state == game::GAMEOVER)
 	{
 		start_text.drawText(surface, 50, 50);
         DrawScores(10, surface);
         return;
     }
+
+	_snake.draw(&rect, surface);	
+
     if (state == game::PAUSED)
     {
         pause_text.drawText(surface, 20, 10);
         DrawScores(10, surface);
+    }
+    else if (state == game::SAVESCORE)
+    {
+        Text enter_name((char*)"NovaSquare-Regular.ttf", (char*)"Please enter your name", 25, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+        enter_name.drawText(surface, SCREEN_SIZE / 2, SCREEN_SIZE / 2 + 100);
+
+        Text name((char*)"NovaSquare-Regular.ttf", (char*)player_name.c_str(), 30, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+        name.drawText(surface, SCREEN_SIZE / 2, SCREEN_SIZE / 2 + 150);
     }
 
 	for(Fruit fruit : fruit_vector)
 	{
 		fruit.draw(surface, &rect);
 	}
-    
-	_snake.draw(&rect, surface);	
+
+    Text score_text((char*)"NovaSquare-Regular.ttf", (char*)std::to_string(score).c_str(), 20, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+    score_text.drawText(surface, SCREEN_SIZE - 50, 10);
+
 }
 
 void Game::Update(float delta)
 {
-	if (state != game::RUNNING)
-		return;
-        
-	current_step_time += delta;
+    if (state != game::RUNNING)
+        return;
 
-	if (current_step_time >= step_time)
-	{
-		if (next_move_y.size() > 0)
-		{	
-			_snake.direction_y = next_move_y.front();
-			_snake.direction_x = next_move_x.front();
-			next_move_x.pop_front();
-			next_move_y.pop_front();
-		}
+    current_step_time += delta;
+    
+    // new fruit
+    if (fruit_vector.size() < min_fruits)
+    {
+        fruit_vector.emplace_back(Fruit(
+            rand() % RESOLUTION * CELL_SIZE, 
+            rand() % RESOLUTION * CELL_SIZE,1));
 
-		_snake.move(delta);
-		_snake.update(delta);
-		
-		if (_snake.state == _snake.DEAD)
-		{
+        float chance = rand() % 10 * 1;
+        // special fruit
+        if (chance > 8)
+        {
+            fruit_vector.back().rate = 3;
+            fruit_vector.back().lifespam = 250;
+            fruit_vector.back().features.emplace_back(Fruit::feature::timer);
+            fruit_vector.back().color = 0x00af8800;
+        }
+    }
+
+    if (current_step_time >= step_time)
+    {
+        if (next_move_y.size() > 0)
+        {	
+            _snake.direction_y = next_move_y.front();
+            _snake.direction_x = next_move_x.front();
+            next_move_x.pop_front();
+            next_move_y.pop_front();
+        }
+
+        _snake.move(delta);
+        _snake.update(delta);
+
+        if (_snake.state == _snake.DEAD)
+        {
             player_name = "";
             SDL_StartTextInput();
-        	state = game::SAVESCORE;
+            state = game::SAVESCORE;
         }
-		for (int i = 0; i < fruit_vector.size(); i++)
-		{
-			if (fruit_vector[i].x == _snake._x && fruit_vector[i].y == _snake._y)
-			{
-                score ++;
-				_snake.grow(fruit_vector[i].rate);
-				fruit_vector.erase(fruit_vector.begin() + i);
+        for (int i = 0; i < fruit_vector.size(); i++)
+        {
+            if (fruit_vector[i].x == _snake._x && fruit_vector[i].y == _snake._y)
+            {
+                score += fruit_vector[i].rate;
+                _snake.grow(fruit_vector[i].rate);
+                fruit_vector.erase(fruit_vector.begin() + i);
 
-				fruit_vector.emplace_back(Fruit(
-					rand() % RESOLUTION * CELL_SIZE, 
-					rand() % RESOLUTION * CELL_SIZE,1));
-			}
-		}
+            }
+            else if (fruit_vector[i].hasFeature(Fruit::feature::timer))
+            {
+                if (fruit_vector[i].lifespam <= 0)
+                {
+                    fruit_vector.erase(fruit_vector.begin() + i);
 
-		current_step_time = 0;
-	}
+                }
+                fruit_vector[i].lifespam -= delta;
+            }
+        }
+
+        current_step_time = 0;
+    }
 }
 
 void Game::Input(SDL_Event e)
@@ -150,6 +184,12 @@ void Game::Input(SDL_Event e)
         // DEBUG
         if( e.key.keysym.sym == SDLK_SPACE )
             _snake.grow(1);
+        //Handle backspace
+        if( e.key.keysym.sym == SDLK_BACKSPACE && player_name.length() > 0
+        && state == game::States::SAVESCORE )
+        {
+            player_name.pop_back();
+        }
     }
     else if( e.type == SDL_TEXTINPUT )
     {
@@ -224,7 +264,7 @@ void Game::SaveScore(std::string player_name)
     std::ofstream scores;
     scores.open("scores.dat", std::ios::app);
     scores << player_name << ":" << score << "\n" ;
-    std::cout << "score saved :" << score << std::endl;
+    //std::cout << "score saved :" << score << std::endl;
     scores.close();
 }
 
@@ -247,15 +287,12 @@ std::vector<std::pair<std::string,int>> Game::LoadScores()
     {
         temp += c;
 
-        std::cout << "c" << c << std::endl;
-        std::cout << "temp" << temp << std::endl;
         if ( c == ':')
         {
             temp.pop_back();
             name = temp;
             if ( name.empty() )
                 name = "NoName";
-            std::cout << "got the name" << name << std::endl;
             temp = "";
         }
         else if (c == '\n')
@@ -289,8 +326,7 @@ void Game::DrawScores(int n_of_scores, SDL_Surface* surface)
         std::string name = _score.first;
         std::string score = std::to_string(_score.second);
         std::string line = name + " : " + score;
-        std::cout << "line " << line << std::endl;
-        line_pos_y += 15;
+        line_pos_y += 20;
         Text score_text((char*)"NovaSquare-Regular.ttf", (char*)line.c_str(), 15, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
         score_text.drawText(surface, SCREEN_SIZE - 200, line_pos_y);
         count++;

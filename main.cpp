@@ -28,7 +28,7 @@ int main(int argc, char* args[])
         return EXIT_FAILURE;
     }
 
-    Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 38, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
+//    Text text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 38, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
     
     Game game;
 	

@@ -34,6 +34,7 @@ public:
 	Text pause_text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Paused, press Enter to play!", 46, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});   
     SDL_Rect rect;
 	Snake _snake;
+    int min_fruits = 1;
 	std::vector<Fruit> fruit_vector;
     game::States state = game::GAMEOVER; 
 	int score = 0;

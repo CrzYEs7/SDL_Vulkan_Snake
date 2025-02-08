@@ -13,3 +13,16 @@ void Fruit::draw(SDL_Surface *surface, SDL_Rect *rect)
 	rect->y = y;
 	SDL_FillRect(surface, rect, color);
 }
+
+bool Fruit::hasFeature(Fruit::feature feature)
+{
+    for (int f : features)
+    {
+        if (feature == f)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
