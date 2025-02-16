@@ -34,7 +34,7 @@ void Snake::update(float delta)
 	if (_body.empty())
 		return;
 	
-	if (_x + CELL_SIZE > SCREEN_SIZE ) _x = 0;
+	if (_x + CELL_SIZE > SCREEN_SIZE) _x = 0;
 	if (_y + CELL_SIZE > SCREEN_SIZE) _y = 0;
 	if (_x < 0) _x = SCREEN_SIZE - CELL_SIZE;
 	if (_y < 0) _y = SCREEN_SIZE - CELL_SIZE;
@@ -42,10 +42,11 @@ void Snake::update(float delta)
 	for (int i = _size - 1; i > 0; i--)
 	{
 
-		if ( _size > 0 && _body[0].x == _body[i].x && _body[0].y == _body[i].y)
+		if (_body[0].x == _body[i].x && _body[0].y == _body[i].y)
 		{
 			state = DEAD;
-		}
+		    return;
+        }
 
 		_body[i].x = _body[i-1].x;
 		_body[i].y = _body[i-1].y;

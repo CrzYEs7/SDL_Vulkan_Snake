@@ -1,11 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <SDL2/SDL_mixer.h>
 #include <deque>
 #include <vector>
 #include <fstream>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_events.h"
+#include "SDL2/SDL_surface.h"
 #include "snake.h"
 #include "fruit.h"
 #include "text.h"
@@ -26,18 +28,19 @@ struct vect_pair_sort
 class Game
 {
 public:
-	Game();
+	Game(SDL_Surface* _window_surface);
 	~Game() = default;
 
 public:
-	Text start_text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Press Enter to Start!", 46, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-	Text pause_text = Text((char*)"NovaSquare-Regular.ttf", (char*)"Paused, press Enter to play!", 46, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});   
     SDL_Rect rect;
 	Snake _snake;
+    
     int min_fruits = 1;
 	std::vector<Fruit> fruit_vector;
+    
     game::States state = game::GAMEOVER; 
-	int score = 0;
+	
+    int score = 0;
     int number_scores_to_show = 10;
 
 public:
@@ -50,6 +53,8 @@ public:
 	void Input(SDL_Event e);
 
 private:
+    SDL_Surface* window_surface;
+
 	float last_time = SDL_GetTicks();
 	float current_step_time;
 	float step_time;
@@ -61,6 +66,15 @@ private:
 	std::deque<int> next_move_x;
 
     vect_pair_sort scores_sort;
+
+    Mix_Chunk* get_fruit_sound;
+    Mix_Music* music; 
+
+    SDL_Color font_color = {200,200,200,255};
+
+    Text* large_text;
+	Text* medium_text;
+    Text* small_text;
 
 private:
     void SaveScore(std::string player_name);

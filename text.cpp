@@ -1,25 +1,25 @@
-#include "text.h"
 #include <SDL2/SDL_ttf.h>
 #include <ostream>
+#include "SDL2/SDL_surface.h"
 #include "globals.h"
+#include "text.h"
 
-
-Text::Text(char* font_name, char* content, int size, SDL_Color foreground_color, SDL_Color background_color)
+Text::Text(SDL_Surface* surface, char* font_name, int size)
 {
+    m_surface = surface;
     m_font = TTF_OpenFont(font_name , size);
     if (m_font == NULL)
         std::cout << "Font not created" << std::endl;
-    m_text_surface = TTF_RenderText_Shaded(m_font, content, foreground_color, background_color);
 }
 
-void Text::drawText(SDL_Surface* screen, int x, int y)
+void Text::drawText(SDL_Surface* display_surface ,char* text, int x, int y, SDL_Color color)
 {
+    SDL_Surface* text_surface = TTF_RenderText_Blended(m_font, text, color);
     SDL_Rect text_location = { x, y, 0, 0 };
-    SDL_BlitSurface(m_text_surface, NULL, screen, &text_location);
+    SDL_BlitSurface(text_surface, NULL, display_surface, &text_location);
 }
 
 Text::~Text()
 {
-    SDL_FreeSurface(m_text_surface);
     TTF_CloseFont(m_font);
 }

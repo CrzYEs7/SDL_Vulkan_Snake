@@ -4,35 +4,62 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
-#include "game.h"
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <deque>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #include <string>
+#include "snake.h"
+#include "fruit.h"
 #include "SDL2/SDL_events.h"
 #include "SDL2/SDL_keyboard.h"
 #include "SDL2/SDL_keycode.h"
+#include "SDL2/SDL_mixer.h"
 #include "SDL2/SDL_pixels.h"
 #include "SDL2/SDL_surface.h"
-#include "fruit.h"
-#include "snake.h"
-#include <deque>
-#include <stdlib.h>
-#include <time.h>
 #include "text.h"
+#include "game.h"
 
-Game::Game()
+Game::Game(SDL_Surface* _window_surface)
+: window_surface(_window_surface)
 {
     //if (TTF_Init() < 0) {
     //    printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
     //}
 
-    //text = Text((char*)"NovaSquareRegular.ttf", (char*)"Press Enter to Start!", 46, SDL_Color{255,255,255,255}, SDL_Color{00,00,00,00});
+    //text = Text((char*)"NovaSquareRegular.ttf", (char*)"Press Enter to Start!", 46, font_color, SDL_Color{00,00,00,00});
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT,2 , 2028) < 0)
+    {
+        std::cout << "audio not initialized!" << std::endl;
+    }
+
+    // Audio loading
+    music = Mix_LoadMUS("sound/snake_music.wav");
+    if ( music == NULL )
+        std::cout << "error loading get_fruit_sound" << std::endl;
+    Mix_VolumeMusic(20);
+
+    get_fruit_sound = Mix_LoadWAV("sound/snake_get_fruit.wav");
+    if ( get_fruit_sound == NULL )
+        std::cout << "error loading get_fruit_sound" << std::endl;
+
+//    Mix_Chunk* game_over_sound = Mix_LoadWAV("sound/game_over.wav");
+//    if ( game_over_sound == NULL )
+//        return 0;
+
+    small_text = new Text(window_surface ,(char*)"NovaSquare-Regular.ttf", 20);
+    medium_text = new Text(window_surface ,(char*)"NovaSquare-Regular.ttf", 35);
+    large_text = new Text(window_surface ,(char*)"NovaSquare-Regular.ttf", 45);
+
+    Mix_PlayMusic( music, -1 );
+
     current_step_time = 0;
 	last_time = 0;
 	step_time = 120;
 
-	next_move_y[0] = 1;
+	next_move_y[0] = 0;
 	next_move_x[0] = 0;
 
 	rect = {_snake._x, _snake._y, CELL_SIZE, CELL_SIZE};
@@ -55,7 +82,7 @@ void Game::Draw(SDL_Surface *surface)
     
 	if (state == game::GAMEOVER)
 	{
-		start_text.drawText(surface, 50, 50);
+		large_text->drawText(surface, (char*)"Press Enter to Start!", 50, 50, font_color);
         DrawScores(10, surface);
         return;
     }
@@ -64,16 +91,16 @@ void Game::Draw(SDL_Surface *surface)
 
     if (state == game::PAUSED)
     {
-        pause_text.drawText(surface, 20, 10);
+        medium_text->drawText(surface, (char*)"Paused", 20, 10, SDL_Color{255,0,0,255});
         DrawScores(10, surface);
+        
+        small_text->drawText(surface, (char*)"Press M to mute the music", SCREEN_SIZE - 300, SCREEN_SIZE - 25, font_color);
     }
     else if (state == game::SAVESCORE)
     {
-        Text enter_name((char*)"NovaSquare-Regular.ttf", (char*)"Please enter your name", 25, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-        enter_name.drawText(surface, SCREEN_SIZE / 2, SCREEN_SIZE / 2 + 100);
+        medium_text->drawText(surface, (char*)"Please enter your name:", SCREEN_SIZE / 2, SCREEN_SIZE / 2 + 100, font_color);
 
-        Text name((char*)"NovaSquare-Regular.ttf", (char*)player_name.c_str(), 30, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-        name.drawText(surface, SCREEN_SIZE / 2, SCREEN_SIZE / 2 + 150);
+        medium_text->drawText(surface, (char*)player_name.c_str(), SCREEN_SIZE / 2, SCREEN_SIZE / 2 + 150, font_color);
     }
 
 	for(Fruit fruit : fruit_vector)
@@ -81,9 +108,9 @@ void Game::Draw(SDL_Surface *surface)
 		fruit.draw(surface, &rect);
 	}
 
-    Text score_text((char*)"NovaSquare-Regular.ttf", (char*)std::to_string(score).c_str(), 20, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-    score_text.drawText(surface, SCREEN_SIZE - 50, 10);
+    medium_text->drawText(surface, (char*)std::to_string(score).c_str(), SCREEN_SIZE - 50, 10, font_color);
 
+    small_text->drawText(surface, (char*)"<p> to pause.", SCREEN_SIZE - 150, SCREEN_SIZE - 50, font_color);
 }
 
 void Game::Update(float delta)
@@ -102,12 +129,13 @@ void Game::Update(float delta)
 
         float chance = rand() % 10 * 1;
         // special fruit
-        if (chance > 8)
+        if (chance > 2)
         {
             fruit_vector.back().rate = 3;
             fruit_vector.back().lifespam = 250;
             fruit_vector.back().features.emplace_back(Fruit::feature::timer);
-            fruit_vector.back().color = 0x00af8800;
+            // Color format is ARGB
+            fruit_vector.back().color = 0xffaf8800;
         }
     }
 
@@ -138,6 +166,7 @@ void Game::Update(float delta)
                 _snake.grow(fruit_vector[i].rate);
                 fruit_vector.erase(fruit_vector.begin() + i);
 
+                Mix_PlayChannel(-1, get_fruit_sound, 0);
             }
             else if (fruit_vector[i].hasFeature(Fruit::feature::timer))
             {
@@ -161,29 +190,60 @@ void Game::Input(SDL_Event e)
 
     if (e.key.type == SDL_KEYDOWN)
     {
-        if( e.key.keysym.sym == SDLK_UP )
+        if(state == game::States::RUNNING)
         {
-            next_move_y.emplace_back(-1);
-            next_move_x.emplace_back(0);
+            if( e.key.keysym.sym == SDLK_UP )
+            {
+                next_move_y.emplace_back(-1);
+                next_move_x.emplace_back(0);
+            }
+            if( e.key.keysym.sym == SDLK_DOWN )
+            {
+                next_move_y.emplace_back(1);
+                next_move_x.emplace_back(0);
+            }
+            if( e.key.keysym.sym == SDLK_LEFT )
+            {
+                next_move_y.emplace_back(0);
+                next_move_x.emplace_back(-1);
+            }
+            if( e.key.keysym.sym == SDLK_RIGHT )
+            {
+                next_move_y.emplace_back(0);
+                next_move_x.emplace_back(1);
+            }
         }
-        if( e.key.keysym.sym == SDLK_DOWN )
-        {
-            next_move_y.emplace_back(1);
-            next_move_x.emplace_back(0);
-        }
-        if( e.key.keysym.sym == SDLK_LEFT )
-        {
-            next_move_y.emplace_back(0);
-            next_move_x.emplace_back(-1);
-        }
-        if( e.key.keysym.sym == SDLK_RIGHT )
-        {
-            next_move_y.emplace_back(0);
-            next_move_x.emplace_back(1);
-        }
+
         // DEBUG
         if( e.key.keysym.sym == SDLK_SPACE )
             _snake.grow(1);
+
+        // Mute music
+        if( e.key.keysym.sym == SDLK_m )
+        {
+            if( Mix_PlayingMusic() == 0 )
+            {
+                //Play the music
+                Mix_PlayMusic( music, -1 );
+            }
+            //If music is being played
+            else
+            {
+                //If the music is paused
+                if( Mix_PausedMusic() == 1 )
+                {
+                    //Resume the music
+                    Mix_ResumeMusic();
+                }
+                //If the music is playing
+                else
+                {
+                    //Pause the music
+                    Mix_PauseMusic();
+                }
+            }
+        }
+
         //Handle backspace
         if( e.key.keysym.sym == SDLK_BACKSPACE && player_name.length() > 0
         && state == game::States::SAVESCORE )
@@ -327,8 +387,7 @@ void Game::DrawScores(int n_of_scores, SDL_Surface* surface)
         std::string score = std::to_string(_score.second);
         std::string line = name + " : " + score;
         line_pos_y += 20;
-        Text score_text((char*)"NovaSquare-Regular.ttf", (char*)line.c_str(), 15, SDL_Color{255,255,255,255}, SDL_Color{0,0,0,0});
-        score_text.drawText(surface, SCREEN_SIZE - 200, line_pos_y);
+        small_text->drawText(surface, (char*)line.c_str(), SCREEN_SIZE - 200, line_pos_y, font_color); 
         count++;
     }
 

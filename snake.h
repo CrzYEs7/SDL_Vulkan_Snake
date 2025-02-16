@@ -34,7 +34,7 @@ public:
 	int get_speed();
 
 public:
-	void draw(SDL_Rect *rect, SDL_Surface *Surface);
+	void draw(SDL_Rect* rect, SDL_Surface *Surface);
 	void update(float delta);
 
 private:

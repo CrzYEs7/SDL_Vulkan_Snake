@@ -8,13 +8,13 @@
 class Text
 {
 public:
-    Text(char* font_name, char* content, int size, SDL_Color foreground_color, SDL_Color background_color);
+    Text(SDL_Surface* surface, char* font_name, int size);
     ~Text();
-    void drawText(SDL_Surface* screen, int x, int y);
+    void drawText(SDL_Surface* display_surface, char* text, int x, int y, SDL_Color color);
 
 private:
 	TTF_Font* m_font; // The font to be loaded from the ttf file.
-	SDL_Surface* m_text_surface; // The surface necessary to create the font texture.
+    SDL_Surface* m_surface; // where to draw the text
 };
 
 #endif

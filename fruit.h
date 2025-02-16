@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <vector>
+#include "SDL2/SDL_stdinc.h"
 #include "SDL2/SDL_surface.h"
 #include "globals.h"
 
