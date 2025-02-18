@@ -9,16 +9,9 @@
 #include <deque>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string>
 #include "snake.h"
 #include "fruit.h"
-#include "SDL2/SDL_events.h"
-#include "SDL2/SDL_keyboard.h"
-#include "SDL2/SDL_keycode.h"
-#include "SDL2/SDL_mixer.h"
-#include "SDL2/SDL_pixels.h"
-#include "SDL2/SDL_surface.h"
 #include "text.h"
 #include "game.h"
 
@@ -57,7 +50,7 @@ Game::Game(SDL_Surface* _window_surface)
 
     current_step_time = 0;
 	last_time = 0;
-	step_time = 120;
+	step_time = 60;
 
 	next_move_y.emplace_back(0);
 	next_move_x.emplace_back(0);
@@ -65,14 +58,7 @@ Game::Game(SDL_Surface* _window_surface)
 	rect = {_snake._x, _snake._y, CELL_SIZE, CELL_SIZE};
 	srand(time(NULL));
 
-    fruit_vector.reserve(41);
-
-    for(int i = 0; i <= 0; i++)
-    {
-        fruit_vector.emplace_back(Fruit(
-            rand() % RESOLUTION * CELL_SIZE, 
-            rand() % RESOLUTION * CELL_SIZE,1));
-    }
+    std::cout << "fruit vector size" << fruit_vector.size() << std::endl;
 	//text->CreateText("Press Enter!");
     score_board = LoadScores();
 }
@@ -123,13 +109,13 @@ void Game::Update(float delta)
     // new fruit
     if (fruit_vector.size() < min_fruits)
     {
-        fruit_vector.emplace_back(Fruit(
+        fruit_vector.emplace_back(
             rand() % RESOLUTION * CELL_SIZE, 
-            rand() % RESOLUTION * CELL_SIZE,1));
+            rand() % RESOLUTION * CELL_SIZE,1);
 
         float chance = rand() % 10 * 1;
         // special fruit
-        if (chance > 2)
+        if (chance >= 8)
         {
             fruit_vector.back().rate = 3;
             fruit_vector.back().lifespam = 250;
@@ -141,6 +127,14 @@ void Game::Update(float delta)
 
     if (current_step_time >= step_time)
     {
+        if (_snake.state == _snake.DEAD)
+        {
+            player_name = "";
+            SDL_StartTextInput();
+            state = game::SAVESCORE;
+            return;
+        }
+
         if (next_move_y.size() > 0)
         {	
             _snake.direction_y = next_move_y.front();
@@ -152,12 +146,6 @@ void Game::Update(float delta)
         _snake.move(delta);
         _snake.update(delta);
 
-        if (_snake.state == _snake.DEAD)
-        {
-            player_name = "";
-            SDL_StartTextInput();
-            state = game::SAVESCORE;
-        }
         for (int i = 0; i < fruit_vector.size(); i++)
         {
             if (fruit_vector[i].x == _snake._x && fruit_vector[i].y == _snake._y)
@@ -175,7 +163,8 @@ void Game::Update(float delta)
                     fruit_vector.erase(fruit_vector.begin() + i);
 
                 }
-                fruit_vector[i].lifespam -= delta;
+                else
+                    fruit_vector[i].lifespam -= delta;
             }
         }
 
@@ -218,27 +207,22 @@ void Game::Input(SDL_Event e)
         if( e.key.keysym.sym == SDLK_SPACE )
             _snake.grow(1);
 
-        // Mute music
+        // Mute/Un mute music
         if( e.key.keysym.sym == SDLK_m )
         {
             if( Mix_PlayingMusic() == 0 )
             {
-                //Play the music
                 Mix_PlayMusic( music, -1 );
             }
             //If music is being played
             else
             {
-                //If the music is paused
                 if( Mix_PausedMusic() == 1 )
                 {
-                    //Resume the music
                     Mix_ResumeMusic();
                 }
-                //If the music is playing
                 else
                 {
-                    //Pause the music
                     Mix_PauseMusic();
                 }
             }
@@ -266,14 +250,11 @@ void Game::Restart()
 	_snake._y = SCREEN_SIZE / 2;
 	
 	fruit_vector.clear();
-	fruit_vector.emplace_back(Fruit(
-		rand() % RESOLUTION * CELL_SIZE, 
-		rand() % RESOLUTION * CELL_SIZE,1));
-    for(int i = 0; i <= 0; i++)
+    for(int i = 0; i < min_fruits; i++)
     {
-        fruit_vector.emplace_back(Fruit(
+        fruit_vector.emplace_back(
             rand() % RESOLUTION * CELL_SIZE, 
-            rand() % RESOLUTION * CELL_SIZE,1));
+            rand() % RESOLUTION * CELL_SIZE,1);
     }
 	
 	_snake.restart();

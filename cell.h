@@ -1,13 +1,13 @@
 #ifndef CELL_H
-#define SNAKE_H
+#define CELL_H
 
-#include <SDL2/SDL.h>
+#include "globals.h"
 
 struct Cell
 {
 	int size;
-	int x;
-	int y;
+	int x = -1 * SCREEN_SIZE;
+	int y = -1 * SCREEN_SIZE;
 	Uint32 color;
 };
 

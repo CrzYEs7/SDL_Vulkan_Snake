@@ -31,7 +31,7 @@ public:
 	void grow(int n);
 	void shrink(int n);
 	void restart();
-	int get_speed();
+	const int get_speed();
 
 public:
 	void draw(SDL_Rect* rect, SDL_Surface *Surface);

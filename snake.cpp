@@ -7,9 +7,8 @@ Snake::Snake()
 {
 	for (int i = 0; i < _size; i++)
 	{
-		Cell new_cell;
-		new_cell.color = color;
-		_body.emplace_back(new_cell);
+		_body.emplace_back();
+		_body.back().color = 0xffffffff;
 	}
 }
 
@@ -19,20 +18,24 @@ void Snake::draw(SDL_Rect *rect, SDL_Surface *surface)
 	{
 		return;
 	}
+
 	for (Cell cell : _body)
 	{
 		rect->x = cell.x;
 		rect->y = cell.y;
 
-		SDL_FillRect(surface, rect, cell.color);
+		SDL_FillRect(surface, rect, 0xffffffff);
 	}
 }
 
 void Snake::update(float delta)
 {
 	if (_body.empty())
+	{
+		state = DEAD;
 		return;
-	
+	}
+
 	if (_x + CELL_SIZE > SCREEN_SIZE) _x = 0;
 	if (_y + CELL_SIZE > SCREEN_SIZE) _y = 0;
 	if (_x < 0) _x = SCREEN_SIZE - CELL_SIZE;
@@ -43,17 +46,16 @@ void Snake::update(float delta)
 
 		if (_body[0].x == _body[i].x && _body[0].y == _body[i].y)
 		{
-			state = DEAD;
-		    return;
-        }
+			//state = DEAD;
+			//return;
+		}
 
-		_body[i].x = _body[i-1].x;
-		_body[i].y = _body[i-1].y;
+		_body[i].x = _body[i - 1].x;
+		_body[i].y = _body[i - 1].y;
 	}
 
 	_body[0].x = _x;
 	_body[0].y = _y;
-
 }
 
 void Snake::move_to(int x, int y)
@@ -68,7 +70,7 @@ void Snake::move(float delta)
 	_y += direction_y * CELL_SIZE;
 }
 
-int Snake::get_speed()
+const int Snake::get_speed()
 {
 	return _speed;
 }
@@ -82,9 +84,9 @@ void Snake::grow(int n)
 {
 	for (int i = 0; i < n; i++)
 	{
-		Cell new_cell;
-		new_cell.color = color;
-		_body.emplace_back(new_cell);
+		//Cell new_cell;
+		//new_cell.color = color;
+		_body.emplace_back();
 	}
 	
 	_size += n;

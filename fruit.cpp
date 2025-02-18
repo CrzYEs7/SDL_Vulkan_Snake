@@ -1,7 +1,9 @@
 #include "fruit.h"
+#include <iostream>
 
 Fruit::Fruit(int _x, int _y, int _rate)
 {
+    std::cout << "fruit created" << std::endl;
 	x = _x;
 	y = _y;
 	rate = _rate;

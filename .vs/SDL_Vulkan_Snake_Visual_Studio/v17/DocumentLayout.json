@@ -11,12 +11,20 @@
       "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|C:\\Dev\\SDL_Vulkan_Snake\\text.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:text.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|C:\\Dev\\SDL_Vulkan_Snake\\snake.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:snake.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|C:\\Dev\\SDL_Vulkan_Snake\\game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|C:\\Dev\\SDL_Vulkan_Snake\\snake.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:snake.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|C:\\Dev\\SDL_Vulkan_Snake\\cell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:cell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|C:\\Dev\\SDL_Vulkan_Snake\\text.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{EEEC057B-E3FA-4D84-AD5B-B9D7B1C08A25}|SDL_Vulkan_Snake_Visual_Studio.vcxproj|solutionrelative:text.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -51,27 +59,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "text.cpp",
-              "DocumentMoniker": "C:\\Dev\\SDL_Vulkan_Snake\\text.cpp",
-              "RelativeDocumentMoniker": "text.cpp",
-              "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\text.cpp",
-              "RelativeToolTip": "text.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-17T23:06:31.685Z",
+              "Title": "snake.h",
+              "DocumentMoniker": "C:\\Dev\\SDL_Vulkan_Snake\\snake.h",
+              "RelativeDocumentMoniker": "snake.h",
+              "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\snake.h",
+              "RelativeToolTip": "snake.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-18T22:55:15.596Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "game.h",
-              "DocumentMoniker": "C:\\Dev\\SDL_Vulkan_Snake\\game.h",
-              "RelativeDocumentMoniker": "game.h",
-              "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\game.h",
-              "RelativeToolTip": "game.h",
-              "ViewState": "AQIAACgAAAAAAAAAAAAkwEAAAAAcAAAA",
+              "Title": "snake.cpp",
+              "DocumentMoniker": "C:\\Dev\\SDL_Vulkan_Snake\\snake.cpp",
+              "RelativeDocumentMoniker": "snake.cpp",
+              "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\snake.cpp",
+              "RelativeToolTip": "snake.cpp",
+              "ViewState": "AQIAABUAAAAAAAAAAAAAADEAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-18T22:51:29.137Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "cell.h",
+              "DocumentMoniker": "C:\\Dev\\SDL_Vulkan_Snake\\cell.h",
+              "RelativeDocumentMoniker": "cell.h",
+              "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\cell.h",
+              "RelativeToolTip": "cell.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-17T22:58:41.499Z",
+              "WhenOpened": "2025-02-18T22:02:03.288Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "text.cpp",
+              "DocumentMoniker": "C:\\Dev\\SDL_Vulkan_Snake\\text.cpp",
+              "RelativeDocumentMoniker": "text.cpp",
+              "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\text.cpp",
+              "RelativeToolTip": "text.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-17T23:06:31.685Z",
               "EditorCaption": ""
             },
             {
@@ -82,7 +116,7 @@
               "RelativeDocumentMoniker": "game.cpp",
               "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\game.cpp",
               "RelativeToolTip": "game.cpp",
-              "ViewState": "AQIAAGkAAAAAAAAAAAAkwHMAAAAXAAAA",
+              "ViewState": "AQIAAI0AAAAAAAAAAAAkwKYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-02-17T22:55:32.053Z",
               "EditorCaption": ""
@@ -95,7 +129,7 @@
               "RelativeDocumentMoniker": "main.cpp",
               "ToolTip": "C:\\Dev\\SDL_Vulkan_Snake\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAASAAAA",
+              "ViewState": "AQIAAFsAAAAAAAAAAAAkwHEAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-02-17T22:01:28.631Z",
               "EditorCaption": ""
