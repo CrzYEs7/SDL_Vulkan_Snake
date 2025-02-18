@@ -16,6 +16,9 @@
 #include "snake.h"
 #include "text.h"
 
+/*
+    TODO : When window resizing, the frame_time gets crazy, and the fruit timers miss berravier. (times passes really fast)
+*/
 
 int main(int argc, char* args[])
 {
@@ -52,6 +55,7 @@ int main(int argc, char* args[])
     SDL_Rect window_rect = {0,0,SCREEN_SIZE, SCREEN_SIZE};
     SDL_Rect scaled_window_rect = window_rect;
 
+    Text fps_text = Text(canvas_surface, (char*)"NovaSquare-Regular.ttf", 10);
 
 	while( !quit )
 	{
@@ -77,10 +81,11 @@ int main(int argc, char* args[])
                             scaled_window_rect = {0,0,scaled_window_size_y,scaled_window_size_y};
                         else
                             scaled_window_rect = {0,0,scaled_window_size_x, scaled_window_size_x};
+                        SDL_FreeSurface(window_surface);
+                        SDL_FreeSurface(canvas_surface);
                         window_surface = SDL_GetWindowSurface(window);
                         // Covert to 32bit color
                         canvas_surface = SDL_ConvertSurface(window_surface, window_surface->format, NULL);
-
                 }
             }
             //* ------------ Input ------------- *//
@@ -100,7 +105,7 @@ int main(int argc, char* args[])
 		//* ------------ Draw ----------- *//	
 		game.Draw(canvas_surface);
 
-        Text fps_text = Text(canvas_surface, (char*)"NovaSquare-Regular.ttf", 10);
+        
         fps_text.drawText(canvas_surface, (char*)(std::to_string((int)fps).c_str()), 10, 5, SDL_Color{0,255,0,255});
 
         if (SDL_BlitScaled(canvas_surface, &window_rect, window_surface, &scaled_window_rect) < 0)

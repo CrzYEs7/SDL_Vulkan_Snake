@@ -59,15 +59,15 @@ Game::Game(SDL_Surface* _window_surface)
 	last_time = 0;
 	step_time = 120;
 
-	next_move_y[0] = 0;
-	next_move_x[0] = 0;
+	next_move_y.emplace_back(0);
+	next_move_x.emplace_back(0);
 
 	rect = {_snake._x, _snake._y, CELL_SIZE, CELL_SIZE};
 	srand(time(NULL));
 
     fruit_vector.reserve(41);
 
-    for (int i = 0; i < 0; i++)
+    for(int i = 0; i <= 0; i++)
     {
         fruit_vector.emplace_back(Fruit(
             rand() % RESOLUTION * CELL_SIZE, 
@@ -269,7 +269,7 @@ void Game::Restart()
 	fruit_vector.emplace_back(Fruit(
 		rand() % RESOLUTION * CELL_SIZE, 
 		rand() % RESOLUTION * CELL_SIZE,1));
-    for (int i = 0; i < 0; i++)
+    for(int i = 0; i <= 0; i++)
     {
         fruit_vector.emplace_back(Fruit(
             rand() % RESOLUTION * CELL_SIZE, 

@@ -1,5 +1,6 @@
 #include <SDL2/SDL_ttf.h>
-#include <ostream>
+#include <iostream>
+#include <memory>
 #include "SDL2/SDL_surface.h"
 #include "globals.h"
 #include "text.h"
@@ -17,6 +18,7 @@ void Text::drawText(SDL_Surface* display_surface ,char* text, int x, int y, SDL_
     SDL_Surface* text_surface = TTF_RenderText_Blended(m_font, text, color);
     SDL_Rect text_location = { x, y, 0, 0 };
     SDL_BlitSurface(text_surface, NULL, display_surface, &text_location);
+    SDL_FreeSurface(text_surface);
 }
 
 Text::~Text()

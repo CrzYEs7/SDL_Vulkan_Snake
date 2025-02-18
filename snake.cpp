@@ -17,7 +17,6 @@ void Snake::draw(SDL_Rect *rect, SDL_Surface *surface)
 {
 	if (_body.size() < 1)
 	{
-		std::cout << "dead front snake::draw" << std::endl;
 		return;
 	}
 	for (Cell cell : _body)

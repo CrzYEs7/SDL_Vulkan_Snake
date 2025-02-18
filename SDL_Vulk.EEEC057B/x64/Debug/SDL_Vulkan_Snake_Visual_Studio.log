@@ -1,0 +1,8 @@
+﻿  main.cpp
+C:\Dev\SDL_Vulkan_Snake\game.h(58,32): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Dev\SDL_Vulkan_Snake\main.cpp(96,15): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Dev\SDL_Vulkan_Snake\main.cpp(116,51): warning C4244: '=': conversion from 'Uint64' to 'double', possible loss of data
+C:\Dev\SDL_Vulkan_Snake\main.cpp(121,23): warning C4244: 'argument': conversion from 'double' to 'Uint32', possible loss of data
+  SDL_Vulkan_Snake_Visual_Studio.vcxproj -> C:\Dev\SDL_Vulkan_Snake\x64\Debug\SDL_Vulkan_Snake_Visual_Studio.exe

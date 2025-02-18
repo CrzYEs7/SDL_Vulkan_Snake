@@ -1,0 +1,20 @@
+﻿  fruit.cpp
+  game.cpp
+C:\Dev\SDL_Vulkan_Snake\game.h(58,32): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  (compiling source file 'game.cpp')
+  
+C:\Dev\SDL_Vulkan_Snake\game.cpp(66,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Dev\SDL_Vulkan_Snake\game.cpp(130,22): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Dev\SDL_Vulkan_Snake\game.cpp(264,36): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  main.cpp
+C:\Dev\SDL_Vulkan_Snake\game.h(58,32): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Dev\SDL_Vulkan_Snake\main.cpp(96,15): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Dev\SDL_Vulkan_Snake\main.cpp(116,51): warning C4244: '=': conversion from 'Uint64' to 'double', possible loss of data
+C:\Dev\SDL_Vulkan_Snake\main.cpp(121,23): warning C4244: 'argument': conversion from 'double' to 'Uint32', possible loss of data
+  snake.cpp
+  text.cpp
+  Generating Code...
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/OPT:ICF' specification
+  SDL_Vulkan_Snake_Visual_Studio.vcxproj -> C:\Dev\SDL_Vulkan_Snake\x64\Release\SDL_Vulkan_Snake_Visual_Studio.exe
